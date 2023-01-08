@@ -21,7 +21,7 @@ namespace Application.Activities
             public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
             {
 
-                return await _context.Activities.ToListAsync();
+                return await _context.Activities.OrderBy(x => x.Date).ToListAsync();
             }
         }
     }
