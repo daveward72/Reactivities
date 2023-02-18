@@ -115,7 +115,6 @@ export default class ActivityStore {
                     this.activityRegistry.set(activity.id, updatedActivity as Activity);
                     this.selectedActivity = updatedActivity as Activity;
                 }
-
             })
         } catch (error) {
             console.log(error);
