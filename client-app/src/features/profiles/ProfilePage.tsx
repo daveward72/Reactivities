@@ -7,12 +7,15 @@ import ProfileContent from "./ProfileContent";
 import ProfileHeader from "./ProfileHeader";
 
 export default observer(function ProfilePage() {
-    const {username} = useParams<{username: string}>();
+    const {username} = useParams();
     const {profileStore} = useStore();
-    const {loadingProfile, loadProfile, profile, isCurrentUser} = profileStore;
+    const {loadingProfile, loadProfile, profile, isCurrentUser, setActiveTab} = profileStore;
 
     useEffect(() => {
         if (username) loadProfile(username);
+        return () => {
+            setActiveTab(0);
+        }
     }, [loadProfile, username]);
     return (
         <Grid>
