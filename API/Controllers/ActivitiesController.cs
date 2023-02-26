@@ -2,15 +2,16 @@ using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
+using Application.Core;
 
 namespace API.Controllers
 {
     public class ActivitiesController : BaseApiController
     {
         [HttpGet]   //api/activities
-        public async Task<IActionResult> GetActivities()
+        public async Task<IActionResult> GetActivities([FromQuery]ActivityParams param)
         {
-            return HandleResult(await Mediator.Send(new List.Query()));
+            return HandlePagedResult(await Mediator.Send(new List.Query{Params = param}));
         }
 
         [HttpGet("{id}")]
