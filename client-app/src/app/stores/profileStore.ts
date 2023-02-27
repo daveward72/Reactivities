@@ -1,7 +1,8 @@
+import { act } from "@testing-library/react";
 import { isThisSecond } from "date-fns";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Photo, Profile } from "../models/profile";
+import { Photo, Profile, UserActivity } from "../models/profile";
 import { store } from "./store";
 
 export default class ProfileStore {
@@ -10,7 +11,9 @@ export default class ProfileStore {
     uploading = false;
     loading = false;
     followings: Profile[] = [];
+    userActivities: UserActivity[] = [];
     loadingFollowings = false;
+    loadingActivities = false;
     activeTab = 0;
 
     constructor() {
@@ -62,7 +65,7 @@ export default class ProfileStore {
                 if (profile.displayName && profile.displayName !== store.userStore.user?.displayName) {
                     store.userStore.setDisplayName(profile.displayName);
                 }
-                this.profile = {...this.profile, ...profile as Profile};
+                this.profile = { ...this.profile, ...profile as Profile };
                 this.loading = false;
             })
         } catch (error) {
@@ -166,6 +169,24 @@ export default class ProfileStore {
         } catch (error) {
             console.log(error);
             runInAction(() => this.loadingFollowings = false);
+        }
+    }
+
+
+    loadUserActivities = async (username: string, predicate?: string) => {
+        this.loadingActivities = true;
+        try {
+            const activities = await agent.Profiles.getActivities(username,
+                predicate!);
+            runInAction(() => {
+                this.userActivities = activities;
+                this.loadingActivities = false;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => {
+                this.loadingActivities = false;
+            })
         }
     }
 }
